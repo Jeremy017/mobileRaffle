@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.js"></script>
+	<script type="text/javascript">
+
+	
+	$(function(){
+		(function(){
+			var rafflePhones;
+			var ramdomPhone = {
+				cacheDom: function(){
+					this.$start = $('#start');
+					this.$stop = $('#stop');
+				},
+				init: function(){
+					this.cacheDom();
+					this.bindClick();
+				},
+				bindClick: function(){
+					this.$start.on('click',this.startRaffle.bind(this));
+					this.$stop.on('click',this.stopRaffle.bind(this));
+				},
+				intervals: [],
+				defaultPhone: ['18858290657','13615813902'],
+				startRaffle: function(){
+					var arr = !rafflePhones?this.defaultPhone:rafflePhones;
+					var length = $('.result').length;
+					interval = setInterval(function(){
+						for(var i=0;i<length;i++){
+							var index = Math.floor(Math.random()*arr.length); 
+							$('.result').eq(i).html(arr[index]);
+						}
+					},30);
+					this.intervals.push(interval);
+				},
+				stopRaffle: function(){
+					for(var i=0;i<this.intervals.length;i++){
+						clearInterval(this.intervals[i]);
+					}
+				}
+			};
+
+			ramdomPhone.init();
+
+			$(".result").html('加载中');
+			$.ajax({
+				url : 'http://www.wosaitech.cn/uncle/service/voteRaffle/getVoteRaffleUser.do',
+				data: {hostId:1,beginTime:"2015-01-05 20:00:00",endTime:null},
+				cache : false,
+				error : function() {
+					$(".result").html('加载完成');
+				},
+				success : function(result) {
+					if(result.result!=0){
+						alert(result.message+":没有数据");
+					}
+					rafflePhones = result.data;
+					$(".result").html('加载完成');
+				}
+			});
+		})();
+	});
+
+	</script>
+</head>
+<body>
+	<div>
+		<button id="start">start</button>
+		<button id="stop">stop</button>
+	</div>
+
+	<div class="area">
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+		<div class="result">加载中</div>
+	</div>
+</body>
+</html>
